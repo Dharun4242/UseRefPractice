@@ -1,14 +1,25 @@
 import { useRef, useState } from "react";
 
 function App() {
-  const [time, setTime] = useState(0);
+  const [time, setTime] = useState("");
+  const [inputGoal, setInputGoal] = useState("");
   const xRef = useRef(null);
+  const gRef = useRef(null);
 
   const startTimer = () => {
     if (xRef.current !== null) return;
 
     xRef.current = setInterval(() => {
-      setTime((prevTime) => prevTime + 1);
+      setTime((prevTime) => {
+        const newTime = prevTime + 1;
+
+        if (gRef.current && newTime >= gRef.current) {
+          alert(`Goal of ${gRef.current} seconds reached`);
+          clearInterval(xRef.current);
+          xRef.current = null;
+        }
+        return newTime;
+      });
     }, 1000);
   };
 
@@ -23,14 +34,36 @@ function App() {
     setTime(0);
   };
 
+  const handleGoalChange = (e) => {
+    setInputGoal(e.target.value);
+    const numericGoal = parseInt(e.target.value, 10);
+    if (!isNaN(numericGoal)) {
+      gRef.current = numericGoal;
+    } else {
+      gRef.current = null;
+    }
+  };
+
+  const FormatTime = (timeInSeconds) => {
+    const min = String(Math.floor(timeInSeconds / 60)).padStart(2, "0");
+    const sec = String(timeInSeconds % 60).padStart(2, "0");
+    return `${min}:${sec}`;
+  };
+
   return (
     <div>
-      <h1>StopWatch</h1>
-      <p>Time : {time}</p>
+      <div>
+        <h1>StopWatch</h1>
+        <p>Time : {FormatTime(time)}</p>
 
-      <button onClick={startTimer}>start</button>
-      <button onClick={pauseTimer}>Pause</button>
-      <button onClick={resetTimer}>Reset</button>
+        <button onClick={startTimer}>start</button>
+        <button onClick={pauseTimer}>Pause</button>
+        <button onClick={resetTimer}>Reset</button>
+      </div>
+      <div>
+        <label>Set Goal Time (seconds):</label>
+        <input type="number" value={inputGoal} onChange={handleGoalChange} />
+      </div>
     </div>
   );
 }

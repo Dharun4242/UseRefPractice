@@ -3,8 +3,11 @@ import { useRef, useState } from "react";
 function App() {
   const [time, setTime] = useState("");
   const [inputGoal, setInputGoal] = useState("");
+  const [history, setHistory] = useState(false);
+
   const xRef = useRef(null);
   const gRef = useRef(null);
+  const hRef = useRef([]);
 
   const startTimer = () => {
     if (xRef.current !== null) return;
@@ -31,6 +34,11 @@ function App() {
   const resetTimer = () => {
     clearInterval(xRef.current);
     xRef.current = null;
+
+    if (time > 0) {
+      hRef.current.push(time);
+      setHistory(!history);
+    }
     setTime(0);
   };
 
@@ -50,6 +58,11 @@ function App() {
     return `${min}:${sec}`;
   };
 
+  const clearHistory = () => {
+    hRef.current = [];
+    setHistory(!history);
+  };
+
   return (
     <div>
       <div>
@@ -63,6 +76,22 @@ function App() {
       <div>
         <label>Set Goal Time (seconds):</label>
         <input type="number" value={inputGoal} onChange={handleGoalChange} />
+      </div>
+
+      <div>
+        <h3>Session History</h3>
+        {hRef.current.length === 0 && <p>No Previous Sessions</p>}
+
+        {hRef.current.length > 0 && (
+          <>
+            <ul>
+              {hRef.current.map((sessionTime, index) => (
+                <li key={index}>{FormatTime(sessionTime)}</li>
+              ))}
+            </ul>
+            <button onClick={clearHistory}>Clear History</button>
+          </>
+        )}
       </div>
     </div>
   );

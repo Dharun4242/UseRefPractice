@@ -45,6 +45,8 @@ function App() {
   const pauseTimer = () => {
     clearInterval(xRef.current);
     xRef.current = null;
+
+    iRef.current?.focus();
   };
 
   const resetTimer = () => {

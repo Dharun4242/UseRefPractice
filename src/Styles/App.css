@@ -1,0 +1,64 @@
+/* App.css */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.light-mode {
+  background-color: #f0f0f0;
+  color: #111;
+  min-height: 100vh;
+}
+
+.dark-mode {
+  background-color: #121212;
+  color: #f0f0f0;
+  min-height: 100vh;
+}
+
+.container {
+  padding: 2rem;
+  text-align: center;
+}
+
+.controls button,
+.toggle-mode,
+.history-section button {
+  margin: 0.5rem;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+input {
+  padding: 8px;
+  margin-top: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.history-list {
+  list-style: none;
+  padding: 0;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.light-mode .controls button,
+.light-mode .toggle-mode,
+.light-mode .history-section button {
+  background-color: #333;
+  color: white;
+}
+
+.dark-mode .controls button,
+.dark-mode .toggle-mode,
+.dark-mode .history-section button {
+  background-color: #eee;
+  color: black;
+}

@@ -1,13 +1,26 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import "./Styles/App.css";
 
 function App() {
   const [time, setTime] = useState("");
   const [inputGoal, setInputGoal] = useState("");
   const [history, setHistory] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
   const xRef = useRef(null);
   const gRef = useRef(null);
   const hRef = useRef([]);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("darkMode");
+    if (stored !== null) {
+      setDarkMode(JSON.parse(stored));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+  }, [darkMode]);
 
   const startTimer = () => {
     if (xRef.current !== null) return;
@@ -64,34 +77,42 @@ function App() {
   };
 
   return (
-    <div>
-      <div>
+    <div className={darkMode ? "dark-mode" : "light-mode"}>
+      <div className="container">
         <h1>StopWatch</h1>
-        <p>Time : {FormatTime(time)}</p>
 
-        <button onClick={startTimer}>start</button>
-        <button onClick={pauseTimer}>Pause</button>
-        <button onClick={resetTimer}>Reset</button>
-      </div>
-      <div>
-        <label>Set Goal Time (seconds):</label>
-        <input type="number" value={inputGoal} onChange={handleGoalChange} />
-      </div>
+        <button onClick={() => setDarkMode(!darkMode)} className="toggle-mode">
+          {darkMode ? " Light Mode" : "Dark Mode"}
+        </button>
 
-      <div>
-        <h3>Session History</h3>
-        {hRef.current.length === 0 && <p>No Previous Sessions</p>}
+        <p className="time-display">Time: {FormatTime(time)}</p>
 
-        {hRef.current.length > 0 && (
-          <>
-            <ul>
-              {hRef.current.map((sessionTime, index) => (
-                <li key={index}>{FormatTime(sessionTime)}</li>
-              ))}
-            </ul>
-            <button onClick={clearHistory}>Clear History</button>
-          </>
-        )}
+        <div className="controls">
+          <button onClick={startTimer}>▶️ Start</button>
+          <button onClick={pauseTimer}>⏸️ Pause</button>
+          <button onClick={resetTimer}>⏹️ Reset</button>
+        </div>
+
+        <div className="goal-input">
+          <label> Set Goal Time (seconds):</label>
+          <input type="number" value={inputGoal} onChange={handleGoalChange} />
+        </div>
+
+        <div className="history-section">
+          <h3>Session History</h3>
+          {hRef.current.length === 0 ? (
+            <p>No Previous Sessions</p>
+          ) : (
+            <>
+              <ul className="history-list">
+                {hRef.current.map((sessionTime, index) => (
+                  <li key={index}> {FormatTime(sessionTime)}</li>
+                ))}
+              </ul>
+              <button onClick={clearHistory}> Clear History</button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

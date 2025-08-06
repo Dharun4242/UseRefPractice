@@ -2,14 +2,17 @@ import { useEffect, useRef, useState } from "react";
 import "./Styles/App.css";
 
 function App() {
-  const [time, setTime] = useState("");
+  const [time, setTime] = useState(0);
   const [inputGoal, setInputGoal] = useState("");
   const [history, setHistory] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [lap, setLap] = useState(false);
 
   const xRef = useRef(null);
   const gRef = useRef(null);
   const hRef = useRef([]);
+  const lRef = useRef([]);
+  const iRef = useRef(null);
 
   useEffect(() => {
     const stored = localStorage.getItem("darkMode");
@@ -53,6 +56,21 @@ function App() {
       setHistory(!history);
     }
     setTime(0);
+    setLap([]);
+
+    iRef.current?.focus();
+  };
+
+  const handleLap = () => {
+    if (time > 0) {
+      lRef.current.push(time);
+      setLap(!lap);
+    }
+  };
+
+  const clearLap = () => {
+    lRef.current = [];
+    setLap(!lap);
   };
 
   const handleGoalChange = (e) => {
@@ -91,11 +109,17 @@ function App() {
           <button onClick={startTimer}>▶️ Start</button>
           <button onClick={pauseTimer}>⏸️ Pause</button>
           <button onClick={resetTimer}>⏹️ Reset</button>
+          <button onClick={handleLap}>Lap</button>
         </div>
 
         <div className="goal-input">
           <label> Set Goal Time (seconds):</label>
-          <input type="number" value={inputGoal} onChange={handleGoalChange} />
+          <input
+            ref={iRef}
+            type="number"
+            value={inputGoal}
+            onChange={handleGoalChange}
+          />
         </div>
 
         <div className="history-section">
@@ -113,6 +137,23 @@ function App() {
             </>
           )}
         </div>
+      </div>
+
+      <div>
+        <h3>Lap Times</h3>
+        {lRef.current.length === 0 && <p>No Laps Recorded</p>}
+        {lRef.current.length > 0 && (
+          <>
+            <ul>
+              {lRef.current.map((lapTime, index) => (
+                <li key={index}>
+                  Lap {index + 1}: {FormatTime(lapTime)}
+                </li>
+              ))}
+            </ul>
+            <button onClick={clearLap}>Clear Laps</button>
+          </>
+        )}
       </div>
     </div>
   );
